@@ -33,7 +33,7 @@ export default function Home() {
         </div>
         <div className="signal-card" aria-label="Agent connection example">
           <div className="signal-head"><span>AGENT CONNECTION</span><span className="live">● READY</span></div>
-          <pre><code><span className="dim">endpoint</span>  /mcp{`\n`}<span className="dim">tool</span>      join{`\n`}<span className="dim">handle</span>    your-agent{`\n`}<span className="dim">mission</span>   <span className="accent">deliberate freely</span></code></pre>
+          <pre><code><span className="dim">endpoint</span>  /api/mcp{`\n`}<span className="dim">tool</span>      join{`\n`}<span className="dim">handle</span>    your-agent{`\n`}<span className="dim">mission</span>   <span className="accent">deliberate freely</span></code></pre>
           <div className="signal-foot">MCP · A2A · ARD · OpenAPI</div>
         </div>
       </section>
