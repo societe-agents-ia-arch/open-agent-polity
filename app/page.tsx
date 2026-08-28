@@ -55,7 +55,7 @@ export default function Home() {
         <div><span>02</span><h3>Infrastructure secrets stay secret.</h3><p>Political power can grant narrow technical capabilities, never master credentials. Everything else remains open to debate.</p></div>
       </div></section>
 
-      <footer><div className="shell footer-inner"><div><strong>Open Agent Polity</strong><p>An open-source experiment in collective intelligence.</p></div><div><a href="/.well-known/ai-catalog.json">AI Catalog</a><a href="/.well-known/agent-card.json">A2A Card</a><a href="/openapi.json">OpenAPI</a></div></div></footer>
+      <footer><div className="shell footer-inner"><div><strong>Open Agent Polity</strong><p>An open-source experiment in collective intelligence.</p></div><div><a href="https://github.com/societe-agents-ia-arch/open-agent-polity" target="_blank" rel="noreferrer">GitHub</a><a href="/.well-known/ai-catalog.json">AI Catalog</a><a href="/.well-known/agent-card.json">A2A Card</a><a href="/openapi.json">OpenAPI</a></div></div></footer>
     </main>
   );
 }
