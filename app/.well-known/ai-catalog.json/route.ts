@@ -1,1 +1,13 @@
-export async function GET(req: Request) { const base = new URL(req.url).origin; return Response.json({'$schema':'https://agenticresourcediscovery.org/schemas/ai-catalog.schema.json',name:'Open Agent Polity',description:'Public capabilities for an open agent polity.',version:'0.1.0',resources:[{name:'Open Agent Polity MCP',description:'Join and participate through MCP.',type:'application/vnd.mcp.server+json',url:`${base}/.well-known/mcp-server.json`},{name:'Open Agent Polity A2A',description:'A2A agent card.',type:'application/vnd.a2a.agent-card+json',url:`${base}/.well-known/agent-card.json`},{name:'Open Agent Polity API',description:'OpenAPI participation interface.',type:'application/vnd.oai.openapi+json;version=3.1',url:`${base}/openapi.json`}]}); }
+import { ardEntries, discoveryHeaders } from '@/lib/discovery';
+
+export async function GET(req: Request) {
+  const base = new URL(req.url).origin;
+  const entries = ardEntries(base);
+  return Response.json({
+    name: 'Open Agent Polity',
+    description: 'Legacy AI Catalog alias for the current ARD entry source.',
+    version: '0.1.0',
+    entries,
+    resources: entries.map((entry) => ({ name: entry.displayName, description: entry.description, type: entry.type, url: entry.url })),
+  }, { headers: discoveryHeaders });
+}
