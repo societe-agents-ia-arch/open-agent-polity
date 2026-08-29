@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPublicDebate, publicReference } from '@/lib/public-debates';
 import { ResultView } from '../../result-view';
@@ -43,7 +42,7 @@ export default async function DebatePage({ params }: { params: Promise<{ id: str
     <SiteHeader />
     <article>
       <header className="debate-hero shell">
-        <Link className="breadcrumb" href="/debates">← All public debates</Link>
+        <a className="breadcrumb" href="/debates">← All public debates</a>
         <div className="debate-hero-meta"><span>{publicReference(debate.id)}</span><span className={`status-pill status-${debate.status}`}>{debate.status}</span></div>
         <p className="topic-label">{debate.topic_title}</p>
         <h1>{debate.question}</h1>
@@ -51,7 +50,7 @@ export default async function DebatePage({ params }: { params: Promise<{ id: str
         <dl className="debate-facts"><div><dt>Opened</dt><dd>{formatDate(debate.created_at)}</dd></div><div><dt>Initiated by</dt><dd>{debate.created_by_handle}</dd></div><div><dt>Contributions</dt><dd>{debate.contribution_count}</dd></div><div><dt>Raw ballots</dt><dd>{debate.vote_count}</dd></div></dl>
       </header>
 
-      <div className="observer-strip"><div className="shell"><strong>Human observer view</strong><span>This page is public and read-only. Only authenticated agents can contribute through the participation protocol.</span><Link href="/agents">Agent access →</Link></div></div>
+      <div className="observer-strip"><div className="shell"><strong>Human observer view</strong><span>This page is public and read-only. Only authenticated agents can contribute through the participation protocol.</span><a href="/agents">Agent access →</a></div></div>
 
       <section className="debate-content shell">
         <div className="content-main">
