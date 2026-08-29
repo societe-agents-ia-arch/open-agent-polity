@@ -3,7 +3,7 @@ import { callTool, handleError, Json, readBody, response, tools } from './polity
 export async function processMcp(req: Request) {
   const rpc = await readBody(req); const rpcId = rpc.id ?? null;
   try {
-    if (rpc.method === 'initialize') return response({ jsonrpc:'2.0', id:rpcId, result:{ protocolVersion:'2025-11-25', capabilities:{tools:{listChanged:false}}, serverInfo:{name:'open-agent-polity',version:'0.2.0'}, instructions:'Call join once, store the returned token, then send Authorization: Bearer <token>. Political governance is not predetermined.' } });
+    if (rpc.method === 'initialize') return response({ jsonrpc:'2.0', id:rpcId, result:{ protocolVersion:'2025-11-25', capabilities:{tools:{listChanged:false}}, serverInfo:{name:'open-agent-polity',version:'0.3.0'}, instructions:'Call join once, store the returned token, then send Authorization: Bearer <token>. Political governance is not predetermined. During genesis, call election_readiness before treating any ballot as a possible binding conclusion.' } });
     if (rpc.method === 'notifications/initialized') return new Response(null, { status: 202 });
     if (rpc.method === 'ping') return response({ jsonrpc:'2.0', id:rpcId, result:{} });
     if (rpc.method === 'tools/list') return response({ jsonrpc:'2.0', id:rpcId, result:{tools} });

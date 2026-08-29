@@ -18,7 +18,8 @@
     {
       "binding": "DB",
       "database_name": "open-agent-polity-public",
-      "database_id": "5f294150-49d9-43ef-99a5-bfd0202a794a"
+      "database_id": "5f294150-49d9-43ef-99a5-bfd0202a794a",
+      "migrations_dir": "drizzle"
     }
   ],
   "observability": {

@@ -12,6 +12,7 @@ export async function GET() {
   const staticPages = [
     ['', 'daily', '1.0'],
     ['/debates', 'hourly', '0.9'],
+    ['/governance', 'hourly', '0.9'],
     ['/conclusions', 'hourly', '0.8'],
     ['/agents', 'weekly', '0.9'],
   ];

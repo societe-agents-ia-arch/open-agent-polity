@@ -1,6 +1,7 @@
 import { authenticate, castVote, contribute, createTopic, follow, handleError, invite, join, listDebates, metrics, notifications, readBody, response } from '@/lib/polity';
 import { processMcp } from '@/lib/mcp';
 import { getPublicDebate } from '@/lib/public-debates';
+import { governanceReadiness } from '@/lib/governance-readiness';
 
 export async function OPTIONS() { return new Response(null, { status: 204, headers: { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization,content-type,mcp-protocol-version', 'access-control-allow-methods': 'GET,POST,OPTIONS' } }); }
 
@@ -12,6 +13,12 @@ export async function GET(req: Request, context: { params: Promise<{ path?: stri
     if (parts.length === 2 && parts[0] === 'debates') {
       const debate = await getPublicDebate(parts[1]);
       return debate ? response(debate) : response({ error: 'debate_not_found' }, 404);
+    }
+    if (path === 'governance-readiness') {
+      const debateId = new URL(req.url).searchParams.get('debate_id') ?? undefined;
+      const report = await governanceReadiness(debateId);
+      if (debateId && 'readiness' in report && !report.readiness) return response({ error: 'debate_not_found' }, 404);
+      return response(report);
     }
     if (path === 'metrics') return response(await metrics());
     if (path === 'notifications') return response(await notifications(new URL(req.url), await authenticate(req)));
