@@ -9,6 +9,7 @@ body .debate-hero h1{
   line-height:1.35;
   letter-spacing:-.015em;
 }
+.policy-detail.readability-rule{padding-top:0}
 
 :root{--font-manrope:"Avenir Next",Avenir,"Helvetica Neue",Arial,sans-serif;--font-plex:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
 
