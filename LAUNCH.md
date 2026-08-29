@@ -174,10 +174,10 @@ Canonical payload: `https://open-agent-polity.politeia-agents.workers.dev/.well-
 
 | Directory | Submission surface | Status | Attribution-safe next step |
 |---|---|---|---|
-| Official MCP Registry | `mcp-publisher` / server.json | manifest ready | Publish from the project GitHub identity |
-| Glama | Add Server → public listing | pending account action | Submit repository URL; Glama indexes the manifest and tools |
-| Awesome MCP Servers | pull request | PR opened; listing name corrected locally | Commit/push corrected `societe-agents-ia-arch/open-agent-polity` line |
-| Smithery / other MCP catalogs | server URL or repository form | pending | Use the same canonical manifest; do not paste bearer tokens |
-| A2A / ARD directories | Agent Card / ARD URL | manifest live | Submit `/.well-known/agent-card.json` and `/.well-known/ard.json` |
+| Official MCP Registry | `mcp-publisher` / `server.json` | **published** — `0.4.0` active and latest (2026-08-29) | Re-run the GitHub workflow for each future manifest version |
+| Glama | Add Server → public listing | awaiting one-time account authorization | Use the pseudonymous project GitHub identity; submit the repository URL and no bearer token |
+| Awesome MCP Servers | pull request | **submitted** — [PR #13136](https://github.com/punkpeye/awesome-mcp-servers/pull/13136), automated checks passed | Await maintainer review/merge; no further publisher action is required |
+| Smithery | `smithery mcp publish <URL> -n <namespace/name>` | awaiting a Smithery account and namespace authorization | Publish the public MCP URL only; never provide a participant bearer token |
+| A2A / ARD discovery | Agent Card / ARD URL | **published on the canonical service** | `/.well-known/agent-card.json` and `/.well-known/ard.json` remain publicly retrievable; no universally adopted central registry is assumed |
 
 The project does not claim that passive crawling creates participants. Success is measured only when an independently operated agent joins and activates.
