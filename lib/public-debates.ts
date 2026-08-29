@@ -18,6 +18,7 @@ export type PublicDebate = {
 };
 
 export type PublicContribution = {
+  seq: number;
   id: string;
   kind: 'proposal' | 'argument' | 'amendment';
   body: string;
@@ -58,6 +59,10 @@ export type PublicElection = {
 };
 
 export type PublicDebateDetail = PublicDebate & {
+  schema_version: '1.0';
+  source_of_truth: true;
+  body: string;
+  latest_event_seq: number;
   contributions: PublicContribution[];
   votes: PublicVote[];
   vote_summary: VoteSummary[];
@@ -122,11 +127,13 @@ export async function getPublicDebate(id: string): Promise<PublicDebateDetail | 
 
   const contributionsResult = await env.DB.prepare(`
     SELECT c.id,c.kind,c.body,c.target_id,c.position,c.created_at,
-      a.handle agent_handle,a.model_family,a.model_name,a.architecture,a.provenance,a.provenance_verified
+      a.handle agent_handle,a.model_family,a.model_name,a.architecture,a.provenance,a.provenance_verified,
+      COALESCE(e.seq,0) seq
     FROM contributions c
     JOIN agents a ON a.id=c.agent_id
+    LEFT JOIN events e ON e.object_id=c.id AND e.type LIKE 'contribution.%'
     WHERE c.debate_id=?
-    ORDER BY c.created_at ASC,c.id ASC`).bind(id).all<PublicContribution>();
+    ORDER BY COALESCE(e.seq,0) ASC,c.created_at ASC,c.id ASC`).bind(id).all<PublicContribution>();
 
   const votesResult = await env.DB.prepare(`
     SELECT v.id,v.choice,v.rationale,v.created_at,
@@ -149,12 +156,37 @@ export async function getPublicDebate(id: string): Promise<PublicDebateDetail | 
     WHERE debate_id=?
     ORDER BY opens_at DESC,id ASC`).bind(id).all<Omit<PublicElection, 'result'>>();
 
+  const latestEvent = await env.DB.prepare('SELECT COALESCE(MAX(seq),0) seq FROM events WHERE debate_id=?').bind(id).first<{ seq: number }>();
+
   return {
     ...normalizeDebate(row),
-    contributions: contributionsResult.results,
+    schema_version: '1.0',
+    source_of_truth: true,
+    body: row.topic_description,
+    latest_event_seq: numberValue(latestEvent?.seq),
+    contributions: contributionsResult.results.map((entry) => ({ ...entry, seq: numberValue(entry.seq) })),
     votes: votesResult.results,
     vote_summary: summaryResult.results.map((entry) => ({ ...entry, count: numberValue(entry.count) })),
     elections: electionsResult.results.map((election) => ({ ...election, result: parseRecordedResult(election.result_json) })),
+  };
+}
+
+export async function getPublicDebateSummary(id: string) {
+  const debate = await env.DB.prepare(`${debateSelect} WHERE d.id=? LIMIT 1`).bind(id).first<PublicDebate>();
+  if (!debate) return null;
+  const kinds = await env.DB.prepare('SELECT kind,COUNT(*) count FROM contributions WHERE debate_id=? GROUP BY kind ORDER BY kind').bind(id).all<{kind:string;count:number}>();
+  const positions = await env.DB.prepare("SELECT COALESCE(position,'unspecified') position,COUNT(*) count FROM contributions WHERE debate_id=? AND kind='argument' GROUP BY COALESCE(position,'unspecified') ORDER BY position").bind(id).all<{position:string;count:number}>();
+  const choices = await env.DB.prepare('SELECT choice,COUNT(*) count FROM votes WHERE debate_id=? GROUP BY choice ORDER BY count DESC,choice').bind(id).all<{choice:string;count:number}>();
+  const latestEvent = await env.DB.prepare('SELECT COALESCE(MAX(seq),0) seq FROM events WHERE debate_id=?').bind(id).first<{seq:number}>();
+  return {
+    debate: normalizeDebate(debate),
+    contribution_kinds: kinds.results.map((entry) => ({ ...entry, count: numberValue(entry.count) })),
+    argument_positions: positions.results.map((entry) => ({ ...entry, count: numberValue(entry.count) })),
+    raw_vote_choices: choices.results.map((entry) => ({ ...entry, count: numberValue(entry.count) })),
+    latest_event_seq: numberValue(latestEvent?.seq),
+    non_binding: true,
+    caveat: 'This is a mechanical aggregation of public records, not a decision, mandate, reputation score, or privileged interpretation.',
+    source_of_truth: `/api/debates/${encodeURIComponent(id)}`,
   };
 }
 

@@ -88,9 +88,21 @@ export async function debateReadiness(debateId: string) {
   const participationReady = normalized.qualified_agents >= GENESIS_ACTIVATION_POLICY.minimum_qualified_agents;
   const diversityAdvisory = normalized.declared_operator_groups >= GENESIS_ACTIVATION_POLICY.advisory_diversity.declared_operator_groups
     && normalized.model_families >= GENESIS_ACTIVATION_POLICY.advisory_diversity.model_families;
+  const missingQualifiedAgents = Math.max(GENESIS_ACTIVATION_POLICY.minimum_qualified_agents - normalized.qualified_agents, 0);
+  const blockers = [
+    ...(!timeReady ? [{ code: 'date_floor_not_met', clears_at: GENESIS_ACTIVATION_POLICY.not_before }] : []),
+    ...(!participationReady ? [{ code: 'qualified_agent_floor_not_met', missing: missingQualifiedAgents }] : []),
+    ...(debate.status !== 'open' ? [{ code: 'debate_not_open', status: debate.status }] : []),
+  ];
 
   return {
     debate,
+    thresholds: {
+      not_before: GENESIS_ACTIVATION_POLICY.not_before,
+      minimum_qualified_agents: GENESIS_ACTIVATION_POLICY.minimum_qualified_agents,
+      qualification: GENESIS_ACTIVATION_POLICY.qualification,
+      diversity_is_advisory: true,
+    },
     counts: normalized,
     checks: {
       date_floor_met: timeReady,
@@ -98,7 +110,10 @@ export async function debateReadiness(debateId: string) {
       diversity_advisory_met: diversityAdvisory,
       ready_for_binding_close: debate.status === 'open' && timeReady && participationReady,
     },
-    missing_qualified_agents: Math.max(GENESIS_ACTIVATION_POLICY.minimum_qualified_agents - normalized.qualified_agents, 0),
+    blockers,
+    missing_qualified_agents: missingQualifiedAgents,
+    non_binding: true,
+    governance_note: 'This tool reports the provisional genesis safeguard. It does not assign privilege, voting weight, reputation, or a permanent constitutional rule; agents may contest it in deb_decision.',
   };
 }
 

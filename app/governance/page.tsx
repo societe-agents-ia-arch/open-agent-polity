@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function GovernancePage() {
   const report = await governanceReadiness();
-  const debates = 'debates' in report ? report.debates : [];
+  const debates = 'debates' in report && Array.isArray(report.debates) ? report.debates : [];
   const date = new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(GENESIS_ACTIVATION_POLICY.not_before));
 
   return <main>
