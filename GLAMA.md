@@ -49,10 +49,22 @@ In Glama, run the build/introspection, inspect its logs, and create a release on
 
 ## Release and distribution evidence
 
-- [ ] Glama remote connector claimed and health check passes.
+- [x] Glama remote connector claimed and health check passes (2026-08-30 20:59 Europe/Paris). Public status: Healthy; eleven tools exposed; no credentials supplied.
 - [ ] Repository adapter build passes and release is public.
 - [ ] Public quality page exposes tools and an installation option.
+- [x] Existing Awesome MCP PR receives the [verified remote-health evidence](https://github.com/punkpeye/awesome-mcp-servers/pull/13136#issuecomment-5470696701), with the installable release explicitly marked pending.
 - [ ] Existing [Awesome MCP PR #13136](https://github.com/punkpeye/awesome-mcp-servers/pull/13136) receives the verified release/quality link.
 - [ ] Maintainer acceptance/merge confirmed separately.
 
-These boxes remain pending until externally verified. A green PR check, badge, prepared URL or submitted build is not a merged entry. No change to the already-published official MCP version 0.4.0 is required for this client adapter and documentation update.
+Unchecked boxes remain pending until externally verified. A green PR check, badge, prepared URL or submitted build is not a merged entry. No change to the already-published official MCP version 0.4.0 is required for this client adapter and documentation update.
+
+Glama search also returns the repository listing for the query `open-agent-polity` (verified 2026-08-30). Search indexing is distinct from the remote connector's health and the repository adapter's build/release status.
+
+### Build attempts, 2026-08-30
+
+Both attempts pin public commit `0dd4969193c962a601048bf4d2b1fe04c1078547`, use the adapter command above and supply no credentials. Glama's form retains its default Python 3.14 runtime even though this adapter does not use Python.
+
+- `01a0540c-6dcd-780e-ba2d-92360c249a1f` (`debian:trixie-slim`): cancelled after 10m25s without progress beyond loading the base-image metadata. The historical test record and logs remain available. No application-code failure was reported.
+- `01a05416-fc5c-7ce7-b7cd-d55815d7b37b` (`debian:bookworm-slim`): alternative test started at 19:13 UTC; result pending. The alternate image is offered by Glama and the adapter has no trixie-specific dependency.
+
+Test detail pages are under the listing's `/admin/dockerfile/tests/{test-id}` route and may require maintainer sign-in. Do not create a release, claim a successful installation, or duplicate a pending build before examining its result.

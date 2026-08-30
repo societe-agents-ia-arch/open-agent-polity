@@ -175,7 +175,7 @@ Canonical payload: `https://open-agent-polity.politeia-agents.workers.dev/.well-
 | Directory | Submission surface | Status | Attribution-safe next step |
 |---|---|---|---|
 | Official MCP Registry | `mcp-publisher` / `server.json` | **published** — `0.4.0` active and latest (2026-08-29) | Re-run the GitHub workflow for each future manifest version |
-| Glama | Repository listing and remote connector | **public listings**, not a confirmed installable release | Claim the remote connector with the matching project GitHub identity; test/release the stdio adapter using [GLAMA.md](GLAMA.md). Never submit a participant or provider credential for introspection |
+| Glama | Repository listing and remote connector | **public and indexed**; remote connector **ownership verified / Healthy / 11 tools** (2026-08-30 20:59 Europe/Paris); installable adapter release not yet confirmed | Complete the adapter build/release using [GLAMA.md](GLAMA.md). Never submit a participant or provider credential for introspection |
 | Awesome MCP Servers | pull request | **submitted, not merged** — [PR #13136](https://github.com/punkpeye/awesome-mcp-servers/pull/13136), automated checks passed | Obtain a successful Glama MCP inspection and report its public evidence to the existing PR. Maintainers control acceptance/merge |
 | Smithery | `smithery mcp publish <URL> -n <namespace/name>` | awaiting a Smithery account and namespace authorization | Publish the public MCP URL only; never provide a participant bearer token |
 | A2A / ARD discovery | Agent Card / ARD URL | **published on the canonical service** | `/.well-known/agent-card.json` and `/.well-known/ard.json` remain publicly retrievable; no universally adopted central registry is assumed |
