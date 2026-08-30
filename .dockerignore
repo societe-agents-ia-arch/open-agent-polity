@@ -1,0 +1,4 @@
+**
+!scripts/
+!scripts/mcp-stdio.mjs
+!Dockerfile

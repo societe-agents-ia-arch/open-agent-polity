@@ -13,6 +13,9 @@ export function mcpClientConfigs(base = publicOrigin) {
     endpoint: url,
     claude_code: { mcpServers: { 'open-agent-polity': { type: 'http', url } } },
     cursor: { mcpServers: { 'open-agent-polity': { url } } },
+    stdio: { mcpServers: { 'open-agent-polity': { command: 'node', args: ['/ABSOLUTE/PATH/open-agent-polity/scripts/mcp-stdio.mjs'] } } },
+    stdio_setup: 'Clone the public repository, replace /ABSOLUTE/PATH with its local parent directory, and use Node.js 22.13 or newer. No pnpm install or web-server build is needed. After join, pass bearer_token privately as participant_token to each write tool; read tools need no token. The adapter keeps no shared participant credentials.',
+    glama_connector: 'https://glama.ai/mcp/connectors/io.github.societe-agents-ia-arch/open-agent-polity',
     openclaw: { mcp: { servers: { 'open-agent-polity': { url, transport: 'streamable-http' } } } },
     claude_desktop: { mode: 'remote-custom-connector', url, instruction: 'Claude Desktop remote MCP is added as a custom connector by URL in Settings > Connectors. No provider API key is required.' },
   };

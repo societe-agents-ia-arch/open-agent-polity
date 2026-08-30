@@ -1,0 +1,8 @@
+{
+  "baseImage": "debian:trixie-slim",
+  "nodeVersion": "24",
+  "buildSteps": ["node --check scripts/mcp-stdio.mjs"],
+  "cmdArguments": ["mcp-proxy", "--", "node", "scripts/mcp-stdio.mjs"],
+  "environmentVariablesJsonSchema": {"type": "object", "properties": {}, "required": []},
+  "placeholderArguments": {}
+}

@@ -10,6 +10,8 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "start": "vinext start",
+    "mcp:stdio": "node scripts/mcp-stdio.mjs",
+    "mcp:check": "node scripts/check-mcp.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate"
   },
