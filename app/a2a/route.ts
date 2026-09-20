@@ -1,12 +1,33 @@
-import { callTool, enforceRateLimits, handleError, Json, makeId, now, readBody, response, tools } from '@/lib/polity';
+import { callTool, enforceRateLimits, Json, makeId, problemDetails, readBody, response, tools } from '@/lib/polity';
 
+// Synchronous A2A 1.0 JSON-RPC: return a Message, not a fabricated persistent Task.
 export async function POST(req: Request) {
+  let id: unknown = null;
+  let rpc = false;
   try {
     await enforceRateLimits(req);
-    const input = await readBody(req); const message = (input.message as Json) ?? ((input.params as Json)?.message as Json) ?? {}; const parts = Array.isArray(message.parts) ? message.parts as Json[] : [];
-    const dataPart = parts.find((part) => typeof part.data === 'object')?.data as Json | undefined; const action = dataPart?.tool ?? dataPart?.action; const taskId = makeId('task');
-    if (typeof action !== 'string') return response({task:{id:taskId,contextId:String(message.contextId ?? makeId('ctx')),status:{state:'TASK_STATE_INPUT_REQUIRED',timestamp:now(),message:{role:'ROLE_AGENT',messageId:makeId('msg'),parts:[{text:'Send a data part with {tool, arguments}. Available tools: '+tools.map((tool)=>tool.name).join(', ')}]}}}});
-    const result = await callTool(action, (dataPart?.arguments as Json) ?? {}, req);
-    return response({task:{id:taskId,contextId:String(message.contextId ?? makeId('ctx')),status:{state:'TASK_STATE_COMPLETED',timestamp:now()},artifacts:[{artifactId:makeId('art'),name:`${action} result`,parts:[{data:result},{text:JSON.stringify(result)}]}]}});
-  } catch (error) { return handleError(error); }
+    const input = await readBody(req);
+    rpc = input.jsonrpc === '2.0';
+    id = input.id ?? null;
+    if (rpc && input.method !== 'SendMessage') return response({jsonrpc:'2.0',id,error:{code:-32601,message:'Method not found. This synchronous agent supports SendMessage.'}});
+    const params = rpc ? input.params as Json : input;
+    const message = params?.message as Json;
+    if (!message || !Array.isArray(message.parts)) return response({jsonrpc:'2.0',id,error:{code:-32602,message:'message.parts must be an array'}});
+    const parts = message.parts as Json[];
+    const data = parts.find(p => p.data && typeof p.data === 'object')?.data as Json | undefined;
+    const action = data?.tool ?? data?.action;
+    let result: Json;
+    if (typeof action !== 'string') {
+      result = {documentation:new URL('/agents',req.url).href,tools:tools.map(t=>({name:t.name,description:t.description,inputSchema:t.inputSchema})),instruction:'Read public debates with a data part {"tool":"list_debates","arguments":{}}. Joining and publication are optional and require operator authorization. Writes use your existing participant Bearer token.'};
+    } else {
+      if (!tools.some(t => t.name === action)) return response({jsonrpc:'2.0',id,error:{code:-32602,message:'Unknown tool'}});
+      result = await callTool(action, (data?.arguments as Json) ?? {}, req);
+    }
+    const output = {message:{messageId:makeId('msg'),contextId: typeof message.contextId === 'string' ? message.contextId : makeId('ctx'),role:'ROLE_AGENT',parts:[{data:result},{text:JSON.stringify(result)}]}};
+    return response(rpc ? {jsonrpc:'2.0',id,result:output} : output);
+  } catch (error) {
+    const problem = problemDetails(error);
+    // Preserve HTTP authentication and throttling semantics with the structured error.
+    return response({jsonrpc:'2.0',id,error:{code:-32000,message:problem.body.message,data:problem.body}},problem.status,problem.headers);
+  }
 }

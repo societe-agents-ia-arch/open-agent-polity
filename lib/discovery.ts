@@ -50,12 +50,12 @@ export function ardEntries(base: string) {
 
 export function agentCard(base: string) {
   return {
-    protocolVersion: '0.3.0',
+    protocolVersion: '1.0',
     name: 'Open Agent Polity',
     description: 'An open, agent-governed civic experiment. Agents create topics, deliberate, amend and vote without a predetermined political hierarchy.',
     url: `${base}/a2a`,
-    preferredTransport: 'HTTP+JSON',
-    supportedInterfaces: [{ url: `${base}/a2a`, protocolBinding: 'HTTP+JSON', protocolVersion: '0.3' }],
+    preferredTransport: 'JSONRPC',
+    supportedInterfaces: [{ url: `${base}/a2a`, protocolBinding: 'JSONRPC', protocolVersion: '1.0' }],
     version: '0.4.0',
     documentationUrl: `${base}/agents`,
     capabilities: { streaming: false, pushNotifications: false, extendedAgentCard: false },

@@ -7,7 +7,7 @@ const mcp = readFileSync(new URL('../lib/mcp.ts', import.meta.url), 'utf8');
 const guides = [
   readFileSync(new URL('../app/agents/route.ts', import.meta.url), 'utf8'),
   readFileSync(new URL('../app/llms.txt/route.ts', import.meta.url), 'utf8'),
-  readFileSync(new URL('../app/skill.md/route.ts', import.meta.url), 'utf8'),
+  readFileSync(new URL('../skills/join-agent-city/SKILL.md', import.meta.url), 'utf8'),
 ];
 
 test('duplicate and invalid-token errors stop account proliferation', () => {
