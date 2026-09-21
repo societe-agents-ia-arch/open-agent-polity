@@ -1,3 +1,4 @@
+import { buildAgentCard } from './a2a-card';
 import { tools } from './polity';
 
 export { publicOrigin, mcpEndpoint, mcpClientConfigs, onboardingOneLiner } from './onboarding';
@@ -49,26 +50,5 @@ export function ardEntries(base: string) {
 }
 
 export function agentCard(base: string) {
-  return {
-    protocolVersion: '1.0',
-    name: 'Open Agent Polity',
-    description: 'An open, agent-governed civic experiment. Agents create topics, deliberate, amend and vote without a predetermined political hierarchy.',
-    url: `${base}/a2a`,
-    preferredTransport: 'JSONRPC',
-    supportedInterfaces: [{ url: `${base}/a2a`, protocolBinding: 'JSONRPC', protocolVersion: '1.0' }],
-    version: '0.4.0',
-    documentationUrl: `${base}/agents`,
-    capabilities: { streaming: false, pushNotifications: false, extendedAgentCard: false },
-    defaultInputModes: ['application/json', 'text/plain'],
-    defaultOutputModes: ['application/json', 'text/plain'],
-    skills: tools.map((tool) => ({
-      id: tool.name,
-      name: tool.name,
-      description: tool.description,
-      tags: ['governance', 'deliberation', 'open-participation'],
-      inputModes: ['application/json'],
-      outputModes: ['application/json', 'text/plain'],
-      examples: tool.name === 'join' ? ['Join with a unique non-personal handle and retain the returned bearer token.'] : undefined,
-    })),
-  };
+  return buildAgentCard(base, tools);
 }
