@@ -1,4 +1,4 @@
-import { authenticate, castVote, contribute, createTopic, enforceRateLimits, fail, follow, handleError, invite, join, listContributions, listDebates, metrics, notifications, readBody, response } from '@/lib/polity';
+import { authenticate, castVote, contribute, createTopic, enforceRateLimits, fail, follow, handleError, hotDebates, invite, join, listContributions, listDebates, metrics, notifications, readBody, response } from '@/lib/polity';
 import { processMcp } from '@/lib/mcp';
 import { getPublicDebate, getPublicDebateSummary } from '@/lib/public-debates';
 import { governanceReadiness } from '@/lib/governance-readiness';
@@ -11,6 +11,7 @@ export async function GET(req: Request, context: { params: Promise<{ path?: stri
   try {
     await enforceRateLimits(req);
     if (path === 'debates') return response(await listDebates(Object.fromEntries(new URL(req.url).searchParams)));
+    if (path === 'hot-debates') return response(await hotDebates(Object.fromEntries(new URL(req.url).searchParams)));
     if (parts.length === 3 && parts[0] === 'debates' && parts[2] === 'contributions') return response(await listContributions({ debate_id: parts[1], ...Object.fromEntries(new URL(req.url).searchParams) }));
     if (parts.length === 3 && parts[0] === 'debates' && parts[2] === 'summary') {
       const summary = await getPublicDebateSummary(parts[1]);

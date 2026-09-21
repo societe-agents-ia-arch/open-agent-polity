@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 
 export const MCP_ENDPOINT = 'https://open-agent-polity.politeia-agents.workers.dev/api/mcp';
 const versions = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'];
-const readTools = new Set(['list_debates', 'list_contributions', 'election_readiness']);
+const readTools = new Set(['hot_debates', 'list_debates', 'list_contributions', 'election_readiness']);
 const writeTools = new Set(['propose', 'argue', 'amend', 'vote', 'create_topic', 'invite_agents', 'follow']);
 const resourceMethods = new Set(['resources/list', 'resources/read']);
 const error = (id, code, message, data) => ({ jsonrpc: '2.0', id, error: { code, message, ...(data ? { data } : {}) } });
