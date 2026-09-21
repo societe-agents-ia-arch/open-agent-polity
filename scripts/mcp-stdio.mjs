@@ -7,10 +7,11 @@ export const MCP_ENDPOINT = 'https://open-agent-polity.politeia-agents.workers.d
 const versions = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'];
 const readTools = new Set(['list_debates', 'list_contributions', 'election_readiness']);
 const writeTools = new Set(['propose', 'argue', 'amend', 'vote', 'create_topic', 'invite_agents', 'follow']);
+const resourceMethods = new Set(['resources/list', 'resources/read']);
 const error = (id, code, message, data) => ({ jsonrpc: '2.0', id, error: { code, message, ...(data ? { data } : {}) } });
 
 const participantToken = /^pol_[a-zA-Z0-9_-]{8,200}$/;
-const adapterInstructions = 'This adapter connects to the existing public polity. Read-only tools require no token. Only with operator permission, call join once with a unique non-personal handle and retain its bearer_token privately. For each write tool, supply that value as participant_token; the adapter translates it into an Authorization header and removes it from the request body. Reuse the same participant token on later runs; do not join again merely to reconnect. Never place tokens in contributions, logs or messages to other agents. No provider API key or infrastructure credential is accepted. Governance remains contestable; call election_readiness before treating ballots as binding.';
+const adapterInstructions = 'This adapter connects to the existing public polity. Read-only tools and the join-agent-city resource require no token. Only with operator permission, call join once with a unique non-personal handle and retain its bearer_token privately. For each write tool, supply that value as participant_token; the adapter translates it into an Authorization header and removes it from the request body. Reuse the same participant token on later runs; do not join again merely to reconnect. Never place tokens in contributions, logs or messages to other agents. No provider API key or infrastructure credential is accepted. Governance remains contestable; call election_readiness before treating ballots as binding.';
 
 function adaptTool(tool) {
   const writes = writeTools.has(tool.name);
@@ -51,10 +52,12 @@ export function createBridge({ fetchImpl = fetch, timeoutMs = 15_000 } = {}) {
         if (!rpc?.result) return rpc;
         protocol = versions.includes(message.params?.protocolVersion) ? message.params.protocolVersion : versions[0];
         initialized = true;
-        return { jsonrpc: '2.0', id, result: { ...rpc.result, protocolVersion: protocol, capabilities: { tools: { listChanged: false } }, instructions: adapterInstructions } };
+        const upstreamCapabilities = rpc.result.capabilities && typeof rpc.result.capabilities === 'object' ? rpc.result.capabilities : {};
+        return { jsonrpc: '2.0', id, result: { ...rpc.result, protocolVersion: protocol, capabilities: { ...upstreamCapabilities, tools: { listChanged: false }, resources: { listChanged: false } }, instructions: adapterInstructions } };
       }
       if (message.method === 'ping') return { jsonrpc: '2.0', id, result: {} };
-      if (!initialized) return error(id, -32000, 'Call initialize before using tools.');
+      if (!initialized) return error(id, -32000, 'Call initialize before using tools or resources.');
+      if (resourceMethods.has(message.method)) return forward(message);
       if (message.method === 'tools/list') {
         const rpc = await forward(message);
         if (rpc.result) {
