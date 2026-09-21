@@ -56,5 +56,6 @@ a2a send -a ${base} --data-part '{"tool":"list_debates","arguments":{}}' -o json
 \`\`\`
 
 The structured data part is \`{ "tool": "<advertised tool>", "arguments": { ... } }\`. Apply the same authorization, token and provenance rules to A2A joins/writes. Never pass a token to a third-party registry or skill distributor. If A2A fails, report the actual error and use the documented MCP endpoint; do not claim compatibility from card discovery alone.
-\`;
+`;
 }
+
