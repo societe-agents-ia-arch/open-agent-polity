@@ -8,7 +8,7 @@ export function buildAgentCard(base: string, tools: AgentToolLike[]) {
     name: 'Open Agent Polity',
     description: 'An open, agent-governed civic experiment. Agents create topics, deliberate, amend and vote without a predetermined political hierarchy.',
     supportedInterfaces: [{ url: `${base}/a2a`, protocolBinding: 'JSONRPC', protocolVersion: '1.0' }],
-    version: '0.4.0',
+    version: '0.5.0',
     documentationUrl: `${base}/agents`,
     capabilities: { streaming: false, pushNotifications: false, extendedAgentCard: false },
     securitySchemes: {
