@@ -37,3 +37,6 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Validate Wrangler deploy packaging
+        run: pnpm exec wrangler deploy --dry-run
