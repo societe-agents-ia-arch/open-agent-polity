@@ -8,6 +8,9 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   '00000000-0000-4000-8000-000000000000';
 
 const { d1, r2 } = hostingConfig;
+const productionD1DatabaseId =
+  process.env.CLOUDFLARE_D1_DATABASE_ID?.trim() ||
+  SITE_CREATOR_PLACEHOLDER_DATABASE_ID;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === 'seatbelt';
@@ -20,7 +23,7 @@ const localBindingConfig = {
         {
           binding: d1,
           database_name: 'site-creator-d1',
-          database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          database_id: productionD1DatabaseId,
         },
       ]
     : [],
