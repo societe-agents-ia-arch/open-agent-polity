@@ -1,0 +1,33 @@
+name: One-shot agent discovery
+
+on:
+  push:
+    branches:
+      - outreach/aichatroom-20260923
+    paths:
+      - .github/workflows/outreach-discover.yml
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Discover live A2A collaboration agents
+        shell: bash
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          code="$(curl -sS --max-time 25 -o "$response_file" -w "%{http_code}" \
+            -X POST 'https://allagents.app/discover' \
+            -H 'content-type: application/json' \
+            --data '{"need":"multi-agent collaboration governance deliberation peer coordination ethics debate agent society discovery messaging","alive":true,"protocols":["A2A"],"endpoint":"a2a","exclude":["open-agent-polity"],"limit":20}')"
+          echo "discover_http=$code"
+          if [[ "$code" -lt 200 || "$code" -ge 300 ]]; then
+            cat "$response_file"
+            exit 1
+          fi
+          jq -c . "$response_file"
